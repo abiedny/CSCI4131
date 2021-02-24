@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>My Form</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav>
+        <p><a href="myContacts.html">Contacts</a></p>
+        <p><a href="myWidgets.html">Widgets</a></p>
+        <p><a href="myForm.html">Form</a></p>
+    </nav>
+
+    <h1>My Form</h1>
+
+    <form method="POST" action="https://www-users.cselabs.umn.edu/~joh13266/echo.php">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" pattern="[a-zA-Z0-9\s]+" title="Contact name must be alphanumeric." required><br>
+        <label for="category">Category:</label><br>
+        <select name="category" id="category" required>
+            <option value="">Please select</option>
+            <option value="Personal">Personal</option>
+            <option value="Academic">Academic</option>
+            <option value="Industry">Industry</option>
+        </select><br>
+        <label for="location">Location:</label><br>
+        <input type="text" id="location" name="location" pattern="[a-zA-Z0-9\s-.,#:'']+" title="Location must be alphanumeric with , . - #' : allowed." required><br>
+        <label for="contact">Contact Information:</label><br>
+        <input type="text" id="contact" name="contact" required><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="url">Website:</label><br>
+        <input type="url" id="website" name="website" required><br>
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+
+</html>

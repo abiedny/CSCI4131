@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>My Contacts</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        window.onload = () => {
+            let rows = document.getElementById("contacts").getElementsByTagName("tr");
+            for (const element of rows) {
+                if (element.id === "thead") continue;
+                element.onmouseover = () => {
+                    //display the big image, and show thubnail
+                    chgbigimg(element.id + ".png", element.id + " picture");
+                    element.getElementsByTagName("img")[0].style.display = "block";
+                };
+                element.onmouseout = () => {
+                    //keep big image, but hide thumbnail
+                    element.getElementsByTagName("img")[0].style.display = "none";
+                };
+            };
+        }
+
+        function chgbigimg(name, txt) {
+            var theimage = document.getElementById("image");
+            theimage.src = name;
+            theimage.alt = txt;
+        }
+    </script>
+</head>
+
+<body>
+    <nav>
+        <p><a href="myContacts.html">Contacts</a></p>
+        <p><a href="myWidgets.html">Widgets</a></p>
+        <p><a href="myForm.html">Form</a></p>
+    </nav>
+
+    <h1>My Contacts</h1>
+
+    <div class="container">
+            <table id="contacts">
+                <tr class="tr0" id="thead">
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Contact Information</th>
+                    <th>Email</th>
+                    <th>Website</th>
+                </tr>
+                <tr class="tr1" id="challou">
+                    <td>Professor Challou</td>
+                    <td>Academic</td>
+                    <td>383 Shepherd Labs<br>100 Union St SE<br>Minneapolis, MN 55455</td>
+                    <td>Professor of Computer Science <img class="thumbnail" src="challou.png" alt="challou thubnail"></td>
+                    <td><a href="mailto://chal0006@umn.edu">chal0006@umn.edu</a></td>
+                    <td><a href="https://cse.umn.edu/cs/dan-challou">Home Page</a></td>
+                </tr>
+                <tr class="tr0" id="goldy">
+                    <td>Goldy Gopher</td>
+                    <td>Personal</td>
+                    <td>TCF Bank Stadium<br>420 SE 23rd Ave<br>Minneapolis, MN 55455</td>
+                    <td>Mascot Extraordinaire <img class="thumbnail" src="goldy.png" alt="goldy thubnail"></td>
+                    <td><a href="mailto://goldy@umn.edu">goldy@umn.edu</a></td>
+                    <td><a href="https://twin-cities.umn.edu/gopher-athletics/goldy-gopher">Home Page</a></td>
+                </tr>
+                <tr class="tr1" id="rkt">
+                    <td>Rocket Team</td>
+                    <td>Academic</td>
+                    <td>Akerman Hall Lab 15<br>110 Union St SE<br>Minneapolis, MN 55455</td>
+                    <td>Engineering team making and launching rockets <img class="thumbnail" src="rkt.png" alt="rkt thubnail"></td>
+                    <td><a href="rkt-team@umn.edu">rkt-team@umn.edu</a></td>
+                    <td><a href="https://rkt.aem.umn.edu/">Org Website</a></td>
+                </tr>
+                <tr class="tr0" id="hrl">
+                    <td>Housing and Residential Life</td>
+                    <td>Industry</td>
+                    <td>210 Delaware St SE<br>Minneapolis, MN 55455</td>
+                    <td>Housing administrative office <img class="thumbnail" src="hrl.png" alt="hrl thubnail"></td>
+                    <td><a href="mailto:://housing@umn.edu">housing@umn.edu</a></td>
+                    <td><a href="https://housing.umn.edu/">Main Page</a></td>
+                </tr>
+                <tr class="tr1" id="ece">
+                    <td>Department of Electrical and Computer Engineering</td>
+                    <td>Academic</td>
+                    <td>200 Union St SE<br>Minneapolis, MN 55455</td>
+                    <td>Academic depertment office <img class="thumbnail" src="ece.png" alt="ece thubnail"></td>
+                    <td><a href="mailto://ece@umn.edu">ece@umn.edu</a></td>
+                    <td><a href="https://ece.umn.edu/">Main Page</a></td>
+                </tr>
+            </table>
+            <img id="image" src="goldy2.png" alt="goldy logo picture">
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+table,
+        th,
+        td {
+            border-style: solid;
+            border-collapse: collapse;
+            border-width: 2px;
+        }
+
+        nav {
+            display: flex;
+            background-color: #0E34F5;
+            color: white;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        body {
+            margin: 0px;
+        }
+
+        nav > p {
+            padding: 0px 0.5em;
+            font-size: 1.5em;
+        }
+
+        nav > p > a:visited {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav > p > a:link {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav > p > a:hover {
+            color: gray;
+            text-decoration: none;
+        }
+
+        nav > p > a:active {
+            color: white;
+            text-decoration: none;
+        }
+
+        img {
+            width: 30%;
+            max-width: 400px;
+            max-height: 500px;
+            height: auto;
+            padding: 1em;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #contacts {
+            width: 60%;
+            padding: 1em;
+        }
+
+        .tr0 {
+            background-color: aliceblue;
+        }
+
+        .tr1 {
+            background-color: rgb(248, 245, 241);
+        }
+
+        .thumbnail {
+            display: none;
+        }
+
+            #pwcheck .short{
+            font-weight:bold;
+            color:#FF0000;
+            font-size:larger;
+            }
+            #pwcheck .weak{
+            font-weight:bold;
+            color:orange;
+            font-size:larger;
+            }
+            #pwcheck .good{
+            font-weight:bold;
+            color:#2D98F3;
+            font-size:larger;
+            }
+            #pwcheck .strong{
+            font-weight:bold;
+            color: limegreen;
+            font-size:larger;
+            }
+            #pwcheck input {
+                padding: 5px 14px;
+                border: 1px solid #d5d9da;
+                box-shadow: 0 0 9px #0E34F5 inset;
+                font-size: 1em;
+                height: 25px;
+            }
+            #pwcheck label{
+                margin-right:5px;
+            }
