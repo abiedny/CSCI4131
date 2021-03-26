@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+   <head> 
+      <meta charset = "utf-8">
+      <title>Find and Fix</title>
+		<script>
+            function getButtonText(i) {
+                const buttonText = ["Go", "Gophers"];
+                return function () {
+                    alert(buttonText[i]);
+                };
+            }
+
+            window.onload = () => {
+			    place = document.getElementById ("mydiv");
+                addButtons();
+            }
+				
+			function addButtons () {
+				for (var i=0, button, paragraph; i<=1; i++) {		
+					button = document.createElement("BUTTON");
+					paragraph = document.createElement("P");
+					button.innerHTML = " BUTTON " + (i + 1);
+					button.onclick = getButtonText(i);
+					place.appendChild(button);
+					place.appendChild(paragraph);
+				}
+			}
+		</script>
+   </head>
+   <body>
+		<div id="mydiv"> </div>
+   </body>
+</html>

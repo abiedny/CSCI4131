@@ -6,27 +6,130 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <script>
+        var markers = [];
         window.onload = () => {
             let rows = document.getElementById("contacts").getElementsByTagName("tr");
             for (const element of rows) {
                 if (element.id === "thead") continue;
                 element.onmouseover = () => {
-                    //display the big image, and show thubnail
-                    chgbigimg(element.id + ".png", element.id + " picture");
                     element.getElementsByTagName("img")[0].style.display = "block";
                 };
                 element.onmouseout = () => {
-                    //keep big image, but hide thumbnail
                     element.getElementsByTagName("img")[0].style.display = "none";
                 };
             };
+
+            let addrFields = document.getElementsByClassName("addr");
+            for (const addr of addrFields) {
+                // Use places or geocoding to get latlng, then mark on map
+                geocoder.geocode({ 'address': addr.textContent }, (results, status) => {
+                    if (status == 'OK') {
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                        });
+                        const info = new google.maps.InfoWindow({
+                            content: addr.textContent,
+                        });
+                        marker.addListener("click", () => {
+                            info.open(map, marker);
+                        });
+                        markers.push(marker);
+                    }
+                    else {
+                        console.log("A bad thing happened: " + status);
+                    }
+                });
+            }
+
+            document.getElementById("place_category").onchange = () => {
+                let otherField = document.getElementById("place_other");
+                if (document.getElementById("place_category").value === "other") {
+                    otherField.disabled = false;
+                }
+                else {
+                    otherField.disabled = true;
+                }
+            };
+        };
+
+        var map;
+        var geocoder;
+        var places;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 44.9727, lng: -93.23540000000003 },
+                zoom: 14
+            });
+            geocoder = new google.maps.Geocoder();
+            places = new google.maps.places.PlacesService(map);
         }
 
-        function chgbigimg(name, txt) {
-            var theimage = document.getElementById("image");
-            theimage.src = name;
-            theimage.alt = txt;
+        var img_count = 0;
+        function randomImage() {
+            let img = document.getElementById("image");
+            img.src = img_count + ".png";
+            img.alt = "random image " + img_count;
+            img_count = (img_count + 1) % 7; //TODO: How many images
         }
+
+        var isRotating = false;
+        var deg = 0;
+        var timer;
+        function toggleRotateImage() {
+            if (isRotating) {
+                //stop it
+                clearInterval(timer);
+                isRotating = false;
+            }
+            else {
+                //start rotating
+                timer = setInterval(() => {
+                    let img = document.getElementById("image");
+                    img.style.transform = "rotate(" + deg + "deg)";
+                    deg = (deg + 1) % 360;
+                }, 1);
+                isRotating = true;
+            }
+        }
+
+        function placeSearch() {
+            let category = (document.getElementById("place_category").value === "other") ? document.getElementById("place_other").value : document.getElementById("place_category").value;
+            let radius = document.getElementById("place_radius").value;
+
+            //clear markers
+            for (marker of markers) {
+                marker.setMap(null);
+            }
+
+            //Make the request to places
+            var req = {
+                location: new google.maps.LatLng(44.9727, -93.23540000000003),
+                radius: radius,
+                type: [category],
+            };
+            places.nearbySearch(req, (results, status) => {
+                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                    for (const result of results) {
+                        //now add the markers
+                        const newmarker = new google.maps.Marker({
+                            map: map,
+                            position: result.geometry.location,
+                        });
+                        const info = new google.maps.InfoWindow({
+                            content: "<h1>" + result.name + "</h1><br>" + result.vicinity,
+                            position: result.geometry.location,
+                        });
+                        newmarker.addListener("click", () => {
+                            info.open(map, marker);
+                        });
+                        markers.push(newmarker);
+                    }
+                }
+            });
+        }
+
     </script>
 </head>
 
@@ -36,10 +139,11 @@
         <p><a href="myWidgets.html">Widgets</a></p>
         <p><a href="myForm.html">Form</a></p>
     </nav>
+    <div class="body_container">
 
-    <h1>My Contacts</h1>
+        <h1>My Contacts</h1>
 
-    <div class="container">
+        <div class="container">
             <table id="contacts">
                 <tr class="tr0" id="thead">
                     <th>Name</th>
@@ -52,15 +156,16 @@
                 <tr class="tr1" id="challou">
                     <td>Professor Challou</td>
                     <td>Academic</td>
-                    <td>383 Shepherd Labs<br>100 Union St SE<br>Minneapolis, MN 55455</td>
-                    <td>Professor of Computer Science <img class="thumbnail" src="challou.png" alt="challou thubnail"></td>
+                    <td class="addr">383 Shepherd Labs <br>100 Union St SE <br>Minneapolis, MN 55455</td>
+                    <td>Professor of Computer Science <img class="thumbnail" src="challou.png" alt="challou thubnail">
+                    </td>
                     <td><a href="mailto://chal0006@umn.edu">chal0006@umn.edu</a></td>
                     <td><a href="https://cse.umn.edu/cs/dan-challou">Home Page</a></td>
                 </tr>
                 <tr class="tr0" id="goldy">
                     <td>Goldy Gopher</td>
                     <td>Personal</td>
-                    <td>TCF Bank Stadium<br>420 SE 23rd Ave<br>Minneapolis, MN 55455</td>
+                    <td class="addr">TCF Bank Stadium <br>420 SE 23rd Ave <br>Minneapolis, MN 55455</td>
                     <td>Mascot Extraordinaire <img class="thumbnail" src="goldy.png" alt="goldy thubnail"></td>
                     <td><a href="mailto://goldy@umn.edu">goldy@umn.edu</a></td>
                     <td><a href="https://twin-cities.umn.edu/gopher-athletics/goldy-gopher">Home Page</a></td>
@@ -68,15 +173,16 @@
                 <tr class="tr1" id="rkt">
                     <td>Rocket Team</td>
                     <td>Academic</td>
-                    <td>Akerman Hall Lab 15<br>110 Union St SE<br>Minneapolis, MN 55455</td>
-                    <td>Engineering team making and launching rockets <img class="thumbnail" src="rkt.png" alt="rkt thubnail"></td>
+                    <td class="addr">Akerman Hall Lab 15 <br>110 Union St SE <br>Minneapolis, MN 55455</td>
+                    <td>Engineering team making and launching rockets <img class="thumbnail" src="rkt.png"
+                            alt="rkt thubnail"></td>
                     <td><a href="rkt-team@umn.edu">rkt-team@umn.edu</a></td>
                     <td><a href="https://rkt.aem.umn.edu/">Org Website</a></td>
                 </tr>
                 <tr class="tr0" id="hrl">
                     <td>Housing and Residential Life</td>
                     <td>Industry</td>
-                    <td>210 Delaware St SE<br>Minneapolis, MN 55455</td>
+                    <td class="addr">210 Delaware St SE <br>Minneapolis, MN 55455</td>
                     <td>Housing administrative office <img class="thumbnail" src="hrl.png" alt="hrl thubnail"></td>
                     <td><a href="mailto:://housing@umn.edu">housing@umn.edu</a></td>
                     <td><a href="https://housing.umn.edu/">Main Page</a></td>
@@ -84,14 +190,50 @@
                 <tr class="tr1" id="ece">
                     <td>Department of Electrical and Computer Engineering</td>
                     <td>Academic</td>
-                    <td>200 Union St SE<br>Minneapolis, MN 55455</td>
+                    <td class="addr">200 Union St SE <br>Minneapolis, MN 55455</td>
                     <td>Academic depertment office <img class="thumbnail" src="ece.png" alt="ece thubnail"></td>
                     <td><a href="mailto://ece@umn.edu">ece@umn.edu</a></td>
                     <td><a href="https://ece.umn.edu/">Main Page</a></td>
                 </tr>
             </table>
-            <img id="image" src="goldy2.png" alt="goldy logo picture">
+            <div id="random_image_container">
+                <img id="image" src="goldy2.png" alt="goldy logo picture">
+                <span id="img_btns">
+                    <button id="random_image_btn" onclick="randomImage()">Random Image</button>
+                    <button id="rotate_image_btn" onclick="toggleRotateImage()">Rotate Image</button>
+                </span>
+            </div>
+        </div>
+
+        <div class="container">
+            <div id="map"></div>
+            <div id="mapinput" class="container">
+                <div>
+                    <label for="place_category">Place Category:</label><br>
+                    <select name="place_category" id="place_category">
+                        <option value="restaurant">Restaurant</option>
+                        <option value="hospital">Hospital</option>
+                        <option value="parking">Parking</option>
+                        <option value="supermarket">Supermarket</option>
+                        <option value="other">Other (type below...)</option>
+                    </select><br>
+                    <label for="other">Other:</label><br>
+                    <input type="text" id="place_other" name="other" disabled><br>
+                    <label for="radius">Search Radius:</label><br>
+                    <input type="text" id="place_radius" name="radius"><br>
+                    <button onclick="placeSearch()">Search</button>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwroIOiVrSqVbZT_-mhERwOS5AwwSMakE&libraries=places&callback=initMap">
+        </script>
 
 </body>
 

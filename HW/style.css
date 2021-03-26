@@ -103,3 +103,25 @@ table,
             #pwcheck label{
                 margin-right:5px;
             }
+            #img_btns {
+                padding-top: 1em;
+                display: block;
+            }
+            #random_image_container {
+                padding-left: 2em;
+                width: 30%;
+            }
+            #map {
+                height: 30em;
+                width: 75%;
+                margin: 1em auto;
+                padding: 1em;
+            }
+            #mapinput {
+                height: 30em;
+                margin: 1em auto;
+                padding: 1em;
+            }
+            .body_container {
+                margin: 0px 1em;
+            }
