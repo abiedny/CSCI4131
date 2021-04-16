@@ -9,9 +9,9 @@ const bcrypt = require('bcrypt');
 
 const dbCon = mysql.createConnection({
     host: "cse-mysql-classes-01.cse.umn.edu",
-    user: "C4131S21UXXX",               // replace with the database user provided to you
-    password: "XXXXX",                  // replace with the database password provided to you
-    database: "C4131S21UXXX",           // replace with the database user provided to you
+    user: "C4131S21U10",               // replace with the database user provided to you
+    password: "130",                  // replace with the database password provided to you
+    database: "C4131S21U10",           // replace with the database user provided to you
     port: 3306
 });
 
@@ -24,12 +24,12 @@ dbCon.connect(function (err) {
     console.log("Connected to database!");
 
     const saltRounds = 10;
-    const myPlaintextPassword = 'tango'; // replace with password chosen by you OR retain the same value
+    const myPlaintextPassword = 'password'; // replace with password chosen by you OR retain the same value
     const passwordHash = bcrypt.hashSync(myPlaintextPassword, saltRounds);
 
     const rowToBeInserted = {
-        acc_name: 'charlie',            // replace with acc_name chosen by you OR retain the same value
-        acc_login: 'charlie',           // replace with acc_login chosen by you OR retain the same value
+        acc_name: 'alex',            // replace with acc_name chosen by you OR retain the same value
+        acc_login: 'alex',           // replace with acc_login chosen by you OR retain the same value
         acc_password: passwordHash      
     };
 
