@@ -12,10 +12,11 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <ul class="nav navbar-nav">
-        <li><a href="index.html"><b>Home</b></a></li>
-        <li><a href="contacts.html"><b>Contacts</b></a></li>
-        <li><a href="addContact.html"><b>Add Contact</b></a></li>
-        <li><a href="stock.html"><b>Stock Page</b></a></li>
+        <li><a href="/"><b>Welcome</b></a></li>
+        <li><a href="contacts"><b>Contacts</b></a></li>
+        <li><a href="addContact"><b>Add Contact</b></a></li>
+        <li><a href="stock"><b>Stock Page</b></a></li>
+        <li><a href="api/logout"><b>Log Out</b></a></li>
       </ul>
     </div>
   </nav>
@@ -37,7 +38,7 @@
     </table>
   </div>
   <script type="text/javascript">
-    fetch('http://localhost:9001/contacts.json')
+    fetch('api/contacts')
       .then(response => response.json())
       .then(data => {
         console.log(data.contacts);
@@ -50,7 +51,6 @@
             + contact.website_url + "'>" + contact.website_name + "</td></tr>";
         }
       });
-
   </script>
 </body>
 

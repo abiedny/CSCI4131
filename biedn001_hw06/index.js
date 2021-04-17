@@ -30,10 +30,10 @@ const app = express();
 // Use express-session
 // In-memory session is sufficient for this assignment
 app.use(session({
-        secret: "csci4131secretkey",
-        saveUninitialized: true,
-        resave: false
-    }
+    secret: "csci4131secretkey",
+    saveUninitialized: true,
+    resave: false
+}
 ));
 
 // middle ware to serve static files
@@ -48,12 +48,44 @@ app.get('/', function (req, res) {
 
 // GET method route for the contacts page.
 // It serves contact.html present in public folder
-app.get('/contacts', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/contacts.html'));
+app.get('/contacts', function (req, res) {
+    if (req.session.user === null || req.session.user === undefined) {
+        //redirect to login page
+        res.sendFile(path.join(__dirname, 'public/login.html'));
+    }
+    else {
+        res.sendFile(path.join(__dirname, 'public/contacts.html'));
+    }
 });
 
-app.get('/login', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/login.html'));
+app.get('/addContact', function (req, res) {
+    if (req.session.user === null || req.session.user === undefined) {
+        //redirect to login page
+        res.sendFile(path.join(__dirname, 'public/login.html'));
+    }
+    else {
+        res.sendFile(path.join(__dirname, 'public/addContact.html'));
+    }
+});
+
+app.get('/stock', function (req, res) {
+    if (req.session.user === null || req.session.user === undefined) {
+        //redirect to login page
+        res.sendFile(path.join(__dirname, 'public/login.html'));
+    }
+    else {
+        res.sendFile(path.join(__dirname, 'public/stock.html'));
+    }
+});
+
+app.get('/login', function (req, res) {
+    if (req.session.user !== null || req.session.user !== undefined) {
+        //redirect to contacts
+        res.sendFile(path.join(__dirname, 'public/contacts.html'));
+    }
+    else {
+        res.sendFile(path.join(__dirname, 'public/login.html'));
+    }
 });
 
 // TODO: Add implementation for other necessary end-points
