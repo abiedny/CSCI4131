@@ -1,0 +1,270 @@
+﻿<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+    function exportContacts() {
+      fetch('api/contacts')
+        .then(response => response.json())
+        .then(data => {
+          var text = "Name,Category,Location,Contact_Information,Email,Website,\n";
+          for (const contact of data) {
+            text += contact.name + "," + contact.category + ","
+              + contact.location + "," + contact.contact_info + "," + contact.email + ","
+              + contact.website_url + "," + ",\n";
+          }
+
+          var blob = new Blob([text], { type: fileType });
+          var fileName = "contacts.csv";
+          var fileType = "text/csv";
+
+          var a = document.createElement('a');
+          a.download = fileName;
+          a.href = URL.createObjectURL(blob);
+          a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+        });
+    }
+
+    function reloadContacts() {
+      fetch('api/contacts')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          // Data is a contacts object so make the table with it
+          let tbody = document.getElementById('contactsTable').getElementsByTagName("tbody")[0];
+          tbody.innerHTML = "";
+
+          var i = 0;
+          for (const contact of data) {
+            let manageCell = `
+            <button onclick="editContact(${i})">Edit</button>
+            <button onclick="deleteContact(${i})">Delete</button>
+          `;
+
+            tbody.innerHTML += `<tr id="row${i}"><td>` + contact.name + "</td><td>" + contact.category + "</td><td>"
+              + contact.location + "</td><td>" + contact.contact_info + "</td><td>" + contact.email + "</td><td><a href='"
+              + contact.website_url + "'>" + contact.website + "</td><td>" + manageCell + "</td></tr>";
+
+            i++;
+          }
+        });
+    }
+
+    function editContact(i) {
+      // Put the row in edit mode
+      let row = document.getElementById(`row${i}`);
+      // Name
+      row.children[0].innerHTML = `<input type="text" name="name" value="${row.children[0].innerHTML}" readonly required>`;
+      // Category
+      var selected = "";
+      if (row.children[1].innerHTML === "Academic") {
+        selected = `<option>Personal</option>
+                    <option selected>Academic</option>
+                    <option>Industry</option>`;
+      }
+      else if (row.children[1].innerHTML === "Personal") {
+        selected = `<option selected>Personal</option>
+                    <option>Academic</option>
+                    <option>Industry</option>`;
+      }
+      else if (row.children[1].innerHTML === "Industry") {
+        selected = `<option>Personal</option>
+                    <option>Academic</option>
+                    <option selected>Industry</option>`;
+      }
+      row.children[1].innerHTML = `<select name="category">` + selected + `</select>`;
+      // Location
+      row.children[2].innerHTML = `<input type="text" name="location" value="${row.children[2].innerHTML}" required>`;
+      // Contact Info
+      row.children[3].innerHTML = `<input type="text" name="contact_info" value="${row.children[3].innerHTML}" required>`;
+      // Email
+      row.children[4].innerHTML = `<input type="email" name="email" value="${row.children[4].innerHTML}" required>`;
+      // Website
+      row.children[5].innerHTML = `<input type="url" name="website_url" value="${row.children[5].children[0].href}" required>`;
+
+      // Make the Update and Cancel buttons
+      row.children[6].innerHTML = `<button onclick="updateContact(${i})">Update</button><button onclick="cancelContact(${i})">Cancel</button>`;
+    }
+
+    function updateContact(i) {
+      let row = document.getElementById(`row${i}`);
+      // Check validity
+      $('#error').hide();
+      if (row.children[5].children[0].validity.typeMismatch || row.children[4].children[0].validity.typeMismatch) {
+        document.getElementById("errortext").innerHTML = "Invalid data entered.";
+        $('#error').show();
+        return;
+      }
+
+      // Grab the data and throw in an object
+      let updated = {
+        "name": row.children[0].children[0].value,
+        "category": row.children[1].children[0].value,
+        "location": row.children[2].children[0].value,
+        "contact_info": row.children[3].children[0].value,
+        "email": row.children[4].children[0].value,
+        "website_url": row.children[5].children[0].value,
+      }
+
+      // Send it to api
+      $.post('api/updateContact', updated, data => {
+        if (data.status === 'success') {
+          // Redirect to contacts
+          window.location.href = 'contacts'
+        }
+      });
+    }
+
+    function updateNewContact(i) {
+      let row = document.getElementById(`row${i}`);
+      // Check validity
+      $('#error').hide();
+      if (row.children[5].children[0].validity.typeMismatch || row.children[4].children[0].validity.typeMismatch) {
+        document.getElementById("errortext").innerHTML = "Invalid data entered.";
+        $('#error').show();
+        return;
+      }
+      // updatecontact but we need to insert a record so its different
+      let updated = {
+        "name": row.children[0].children[0].value,
+        "category": row.children[1].children[0].value,
+        "location": row.children[2].children[0].value,
+        "contact_info": row.children[3].children[0].value,
+        "email": row.children[4].children[0].value,
+        "website_url": row.children[5].children[0].value,
+        "website": row.children[5].children[0].value
+      }
+
+      // Send it to api
+      $.post('api/newContact', updated, data => {
+        if (data.status === 'success') {
+          // Redirect to contacts
+          window.location.href = 'contacts'
+        }
+        else {
+          // same name
+          document.getElementById("errortext").innerHTML = "Name already exists."
+          $('#error').show();
+        }
+      });
+    }
+
+    function cancelContact(i) {
+      //hehe
+      $('#error').hide();
+      reloadContacts();
+    }
+
+    function addContact() {
+      // Append a new blank input row
+      let table = document.getElementById("contactsTable");
+      let i = table.children[1].children.length; //very important
+      table.children[1].innerHTML += `
+      <tr id="row${i}">
+        <td><input type="text" name="name" required></td>
+        <td><select class="form-control" name="category"><option>Personal</option><option>Academic</option><option>Industry</option></select></td>
+        <td><input type="text" name="location" required></td>
+        <td><input type="text" name="contact_info" required></td>
+        <td><input type="email" name="email" required></td>
+        <td><input type="text" name="website_url" required></td>
+        <td><button onclick="updateNewContact(${i})">Update</button><button onclick="cancelContact(${i})">Cancel</button></td>
+      </tr>
+      `;
+    }
+
+    function deleteContact(i) {
+      // Ajax to delete it and then reload
+      let row = document.getElementById(`row${i}`);
+
+      $.post('api/deleteContact', { 'name': row.children[0].innerHTML }, data => {
+        if (data.status === 'success') {
+          // Redirect to contacts
+          window.location.href = 'contacts'
+        }
+      });
+
+      reloadContacts();
+    }
+  </script>
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <li><a href="/"><b>Welcome</b></a></li>
+        <li><a href="contacts"><b>Contacts</b></a></li>
+        <li><a href="stock"><b>Stock Page</b></a></li>
+        <li><a onclick="exportContacts()"><b>Export Contacts</b></a></li>
+        <li><a href="api/logout"><b>Log Out</b></a></li>
+        <li><p style="font-size: x-large; padding-top: 10px;" id="greeting"></p></li>
+      </ul>
+    </div>
+  </nav>
+  <br><br>
+
+  <div class="container">
+    <div class="alert alert-danger" role="alert" id="error" hidden>
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
+      <p style="display: inline;" id="errortext"></p>
+    </div>
+    <button onclick="addContact()"><b>Add Contact</b></button>
+    <table class="table" id="contactsTable">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Category</th>
+          <th scope="col">Location</th>
+          <th scope="col">Contact Information</th>
+          <th scope="col">Email</th>
+          <th scope="col">Website <br> (URL) </th>
+          <th scope="col">Manage</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script type="text/javascript">
+    // Fetch contacts to display
+    fetch('api/contacts')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        // Data is a contacts object so make the table with it
+        let tbody = document.getElementById('contactsTable').getElementsByTagName("tbody")[0];
+
+        var i = 0;
+        for (const contact of data) {
+          let manageCell = `
+            <button onclick="editContact(${i})">Edit</button>
+            <button onclick="deleteContact(${i})">Delete</button>
+          `;
+
+          tbody.innerHTML += `<tr id="row${i}"><td>` + contact.name + "</td><td>" + contact.category + "</td><td>"
+            + contact.location + "</td><td>" + contact.contact_info + "</td><td>" + contact.email + "</td><td><a href='"
+            + contact.website_url + "'>" + contact.website + "</td><td>" + manageCell + "</td></tr>";
+
+          i++;
+        }
+      });
+    // Also do the nav bar greeting
+    // ping api/user and grab it
+    fetch('api/user')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("greeting").innerHTML = `Welcome, ${data.user}`;
+      });
+  </script>
+</body>
+
+</html>

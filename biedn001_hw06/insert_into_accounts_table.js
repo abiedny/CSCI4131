@@ -8,9 +8,9 @@ const mysql = require("mysql");
 const bcrypt = require('bcrypt');
 
 const dbCon = mysql.createConnection({
-    host: "cse-mysql-classes-01.cse.umn.edu",
-    user: "C4131S21U10",               // replace with the database user provided to you
-    password: "130",                  // replace with the database password provided to you
+    host: "localhost",
+    user: "root",               // replace with the database user provided to you
+    password: "683548A!ex",                  // replace with the database password provided to you
     database: "C4131S21U10",           // replace with the database user provided to you
     port: 3306
 });
@@ -27,14 +27,34 @@ dbCon.connect(function (err) {
     const myPlaintextPassword = 'password'; // replace with password chosen by you OR retain the same value
     const passwordHash = bcrypt.hashSync(myPlaintextPassword, saltRounds);
 
-    const rowToBeInserted = {
-        acc_name: 'alex',            // replace with acc_name chosen by you OR retain the same value
-        acc_login: 'alex',           // replace with acc_login chosen by you OR retain the same value
-        acc_password: passwordHash      
-    };
+    const rowsToBeInserted = [
+        {
+            "name": "President Joan T.A. Gabel",
+            "category": "Academic",
+            "location": "202 Morrill Hall\r\n100 Church Street SE\r\nMinneapolis, MN 55455",
+            "contact_info": "President of the University of Minnesota System",
+            "email": "upres@umn.edu",
+            "website": "Home Page",
+            "website_url": "https://president.umn.edu/"
+        },
+        {
+            "name": "Professor Dan Challou",
+            "category": "Academic",
+            "location": "383 Shepherd Laboratory\r\n100 Union Street SE\r\nMinneapolis, MN 55455",
+            "contact_info": "Professor of CSCI 4131 - Internet Programming",
+            "email": "chal0006@umn.edu",
+            "website": "Course Home Page",
+            "website_url": "https://canvas.umn.edu/courses/217376"
+        }
+    ];
 
-    console.log("Attempting to insert record into tbl_accounts");
-    dbCon.query('INSERT tbl_accounts SET ?', rowToBeInserted, function (err, result) {
+    dbCon.query('INSERT tbl_contacts SET ?', rowsToBeInserted[0], function (err, result) {
+        if (err) {
+            throw err;
+        }
+        console.log("Table record inserted!");
+    });
+    dbCon.query('INSERT tbl_contacts SET ?', rowsToBeInserted[1], function (err, result) {
         if (err) {
             throw err;
         }

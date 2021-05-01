@@ -41,14 +41,14 @@
     fetch('api/contacts')
       .then(response => response.json())
       .then(data => {
-        console.log(data.contacts);
+        console.log(data);
         // Data is a contacts object so make the table with it
         let tbody = document.getElementById('contactsTable').getElementsByTagName("tbody")[0];
 
-        for (const contact of data.contacts) {
+        for (const contact of data) {
           tbody.innerHTML += "<tr><td>" + contact.name + "</td><td>" + contact.category + "</td><td>"
-            + contact.location + "</td><td>" + contact.contact + "</td><td>" + contact.email + "</td><td><a href='"
-            + contact.website_url + "'>" + contact.website_name + "</td></tr>";
+            + contact.location + "</td><td>" + contact.contact_info + "</td><td>" + contact.email + "</td><td><a href='"
+            + contact.website_url + "'>" + contact.website + "</td></tr>";
         }
       });
   </script>
